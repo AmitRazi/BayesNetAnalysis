@@ -25,14 +25,6 @@ public class Factor {
         this.parentVariable = other.getParentVariable();
     }
 
-    public void addVariable(Variable variable) {
-        this.variablesMap.put(variable.getName(), variable);
-    }
-
-    public void addRow(FactorRow factorRow) {
-        this.factorRows.add(factorRow);
-    }
-
     public void restrict(String variableName, String evidenceState) {
         if (this.variablesMap.get(variableName) != null) {
             this.factorRows =this.factorRows.stream().filter((row) -> row.matchesEvidence(variableName, evidenceState)).collect(Collectors.toList());
@@ -43,10 +35,6 @@ public class Factor {
 
     public Map<String, Variable> getVariablesMap() {
         return this.variablesMap;
-    }
-
-    public void setVariablesMap(Map<String, Variable> variablesMap) {
-        this.variablesMap = variablesMap;
     }
 
     public List<FactorRow> getFactorRows() {
@@ -61,7 +49,7 @@ public class Factor {
         this.factorRows.forEach((row) -> row.removeVariable(variable));
     }
 
-    public boolean findVariable(String variableName) {
+    public boolean containsVariable(String variableName) {
         return this.variablesMap.get(variableName) != null;
     }
 

@@ -1,195 +1,207 @@
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class VariableElimination {
     private final List<Factor> factorList;
     private final Map<String, Variable> variableMap;
     private final Query query;
-    private int multi = 0;
-    private int add = 0;
+    private int multiplications = 0;
+    private int additions = 0;
 
+    // Constructor initializes factorList and variableMap from the given BayesianNetwork and Query
     public VariableElimination(BayesianNetwork network, Query query) {
         this.query = query;
-        this.factorList = network.getFactorList().stream().map(Factor::new).collect(Collectors.toList());
-        this.variableMap = network.getVariableMap()
-                                  .entrySet()
-                                  .stream()
+        this.factorList = network.getFactorList().stream()
+                                 .map(Factor::new)
+                                 .collect(Collectors.toList());
+        this.variableMap = network.getVariableMap().entrySet().stream()
                                   .collect(Collectors.toMap(Map.Entry::getKey,
-                                                            (entry) -> new Variable(entry.getValue())));
+                                                            entry -> new Variable(entry.getValue())));
     }
 
-    public void query() {
-        this.restrict(this.query.getEvidenceVariables());
-        this.filterIrrelevantVariables();
-
-        for (String variableName : this.query.getEliminationVariables()) {
-            List<Factor> relevantFactors = this.findRelevantFactors(variableName);
-            if (relevantFactors.size() != 0) {
-                Factor multipliedFactor = this.multiplyFactors(relevantFactors);
-                multipliedFactor.removeVariableFromRows(variableName);
-                multipliedFactor.setFactorRows(this.sumOut(multipliedFactor));
-                this.factorList.removeAll(relevantFactors);
-                this.factorList.add(multipliedFactor);
-                this.variableMap.remove(variableName);
-            }
+    // Executes the variable elimination algorithm based on the provided query
+    public void executeQuery() {
+        try {
+            restrictFactorsBasedOnEvidence();
+            filterOutIrrelevantVariables();
+            eliminateVariables();
+            processFinalFactorForQueryVariable();
+        } catch (Exception e) {
+            System.err.println("Error during variable elimination: " + e.getMessage());
+            e.printStackTrace();
         }
-
-        Factor finalFactor = this.findFactorContainingQueryVariable(query.getQueryVariable().getKey().getName());
-        this.normalize(finalFactor);
-        System.out.println();
     }
 
+    // Restricts factors based on evidence variables
+    private void restrictFactorsBasedOnEvidence() {
+        restrict(query.getEvidenceVariables());
+    }
+
+    // Filters out irrelevant variables from factorList
+    private void filterOutIrrelevantVariables() {
+        filterIrrelevantVariables();
+    }
+
+    // Eliminates variables as specified in the query
+    private void eliminateVariables() {
+        for (String variableName : query.getEliminationVariables()) {
+            eliminateVariable(variableName);
+        }
+    }
+
+    // Processes the final factor for the query variable
+    private void processFinalFactorForQueryVariable() {
+        Factor finalFactor = multiplyFactors(findFactorsContainingQueryVariable(query.getQueryVariable().getKey().getName()));
+        normalize(finalFactor);
+    }
+
+    // Filters out irrelevant variables from factorList
     private void filterIrrelevantVariables() {
-        Set<String> relevantVariables = this.getRelevantVariables();
-        List<Factor> toDelete = new ArrayList<>();
-
-        for (Factor factor : this.factorList) {
-            if (!relevantVariables.contains(factor.getParentVariable().getName())) {
-                toDelete.add(factor);
-            }
-        }
-
-        this.factorList.removeAll(toDelete);
+        Set<String> relevantVariables = getRelevantVariables();
+        factorList.removeIf(factor -> !relevantVariables.contains(factor.getParentVariable().getName()));
     }
 
-    private Factor findFactorContainingQueryVariable(String queryVariable) {
-        for (Factor factor : this.factorList) {
-            if (factor.getVariablesMap().containsKey(queryVariable)) {
-                return factor;
-            }
-        }
-        // If no single factor contains the query variable, multiply the remaining factors
-        return this.multiplyFactors(this.factorList);
+    // Finds factors that contain the query variable
+    private List<Factor> findFactorsContainingQueryVariable(String queryVariable) {
+        return factorList.stream()
+                         .filter(factor -> factor.getVariablesMap().containsKey(queryVariable))
+                         .collect(Collectors.toList());
     }
 
-
+    // Gets a set of relevant variables based on the query variable and evidence variables
     private Set<String> getRelevantVariables() {
         Set<String> relevantVariables = new HashSet<>();
-        Variable queryVariable = this.variableMap.get(this.query.getQueryVariable().getKey().getName());
+        Variable queryVariable = variableMap.get(query.getQueryVariable().getKey().getName());
         relevantVariables.add(queryVariable.getName());
         relevantVariables.addAll(getAncestors(queryVariable));
 
-        for (Pair<Variable, String> evidencePair : this.query.getEvidenceVariables()) {
-            if(relevantVariables.contains(evidencePair.getKey())) continue;
-            Variable evidenceVariable = this.variableMap.get(evidencePair.getKey().getName());
-            relevantVariables.add(evidenceVariable.getName());
-            relevantVariables.addAll(getAncestors(evidenceVariable));
+        for (Pair<Variable, String> evidencePair : query.getEvidenceVariables()) {
+            Variable evidenceVariable = variableMap.get(evidencePair.getKey().getName());
+            if (relevantVariables.add(evidenceVariable.getName())) {
+                relevantVariables.addAll(getAncestors(evidenceVariable));
+            }
         }
 
         return relevantVariables;
     }
 
+    // Retrieves ancestors of a given variable
     private Set<String> getAncestors(Variable variable) {
         Set<String> ancestors = new HashSet<>();
-        getAncestorsHelper(variable, ancestors);
+        findAncestors(variable, ancestors);
         return ancestors;
     }
 
-    private void getAncestorsHelper(Variable variable, Set<String> ancestors) {
+    // Helper method to recursively find ancestors of a variable
+    private void findAncestors(Variable variable, Set<String> ancestors) {
         for (Variable parent : variable.getParents()) {
             if (ancestors.add(parent.getName())) {
-                getAncestorsHelper(parent, ancestors);
+                findAncestors(parent, ancestors);
             }
         }
     }
 
-    private void normalize(Factor multipliedFactor) {
-        double probabilitySum = multipliedFactor.getFactorRows()
-                                                .stream()
-                                                .map(FactorRow::getProbability)
-                                                .reduce(0.0, Double::sum);
-        this.add += this.variableMap.get(this.query.getQueryVariable().getKey().getName()).getOutcomes().size() - 1;
-        multipliedFactor.getFactorRows().forEach((row) -> row.setProbability(row.getProbability() / probabilitySum));
+    // Normalizes the probabilities in the final factor
+    private void normalize(Factor factor) {
+        double probabilitySum = factor.getFactorRows().stream()
+                                      .mapToDouble(FactorRow::getProbability)
+                                      .sum();
+        additions += variableMap.get(query.getQueryVariable().getKey().getName()).getOutcomes().size() - 1;
+        factor.getFactorRows().forEach(row -> row.setProbability(row.getProbability() / probabilitySum));
     }
 
+    // Finds factors that are relevant for a given variable
     private List<Factor> findRelevantFactors(String variableName) {
-        return this.factorList.stream()
-                              .filter((factor) -> factor.findVariable(variableName))
-                              .collect(Collectors.toList());
+        return factorList.stream()
+                         .filter(factor -> factor.containsVariable(variableName))
+                         .collect(Collectors.toList());
     }
 
+    // Multiplies a list of factors, returning a single factor as the result
     private Factor multiplyFactors(List<Factor> factors) {
-        factors.sort(Comparator.comparingInt((o) -> o.getVariablesMap().size()));
-        Factor accFactor = factors.get(0);
+        factors.sort(Comparator.comparingInt(factor -> factor.getVariablesMap().size()));
+        Factor accumulatedFactor = factors.get(0);
 
-        for (int i = 1; i < factors.size(); ++i) {
-            accFactor = this.multiplyFactors(accFactor, factors.get(i));
+        for (int i = 1; i < factors.size(); i++) {
+            accumulatedFactor = multiplyTwoFactors(accumulatedFactor, factors.get(i));
         }
 
-        return accFactor;
+        return accumulatedFactor;
     }
 
-    private Factor multiplyFactors(Factor f1, Factor f2) {
-        List<String> commonVariables = this.findCommonVariables(f1, f2);
+    // Multiplies two factors and returns the resulting factor
+    private Factor multiplyTwoFactors(Factor f1, Factor f2) {
+        List<String> commonVariables = findCommonVariables(f1, f2);
         List<FactorRow> newRows = new ArrayList<>();
 
         for (FactorRow row1 : f1.getFactorRows()) {
             for (FactorRow row2 : f2.getFactorRows()) {
-                if (this.hasMatchingVariables(row1, row2, commonVariables)) {
+                if (hasMatchingVariables(row1, row2, commonVariables)) {
                     Map<String, String> combinedStateMap = new HashMap<>(row1.getVariablesStateMap());
                     combinedStateMap.putAll(row2.getVariablesStateMap());
                     newRows.add(new FactorRow(combinedStateMap, row1.getProbability() * row2.getProbability()));
-                    ++this.multi;
-                    System.out.println("Multiplying rows: " + row1 + " * " + row2);
+                    multiplications++;
                 }
             }
         }
 
         Map<String, Variable> combinedVariableMap = new HashMap<>(f1.getVariablesMap());
         combinedVariableMap.putAll(f2.getVariablesMap());
+
         return new Factor(combinedVariableMap, newRows);
     }
 
+    // Checks if two factor rows have matching variables
     private boolean hasMatchingVariables(FactorRow row1, FactorRow row2, List<String> commonVariables) {
-        for (String variable : commonVariables) {
-            if (!row1.getVariableState(variable).equals(row2.getVariableState(variable))) {
-                return false;
-            }
-        }
-        return true;
+        return commonVariables.stream()
+                              .allMatch(variable -> row1.getVariableState(variable).equals(row2.getVariableState(variable)));
     }
 
+    // Finds common variables between two factors
     private List<String> findCommonVariables(Factor f1, Factor f2) {
         Set<String> f1Variables = f1.getVariablesMap().keySet();
         Set<String> f2Variables = f2.getVariablesMap().keySet();
-        Set<String> intersection = new HashSet<>(f1Variables);
-        intersection.retainAll(f2Variables);
-        return intersection.stream().toList();
+        return f1Variables.stream()
+                          .filter(f2Variables::contains)
+                          .collect(Collectors.toList());
     }
 
-    private List<FactorRow> sumOut(Factor newFactor) {
-        List<FactorRow> rows = newFactor.getFactorRows();
-        Set<FactorRow> newRows = new HashSet<>();
+    // Sums out a variable from a factor, returning a new list of factor rows
+    private List<FactorRow> sumOut(Factor factor) {
+        List<FactorRow> rows = factor.getFactorRows();
+        Set<FactorRow> summedRows = new HashSet<>();
 
-        for (int i = 0; i < rows.size(); ++i) {
-            for (int j = i + 1; j < rows.size(); ++j) {
+        for (int i = 0; i < rows.size(); i++) {
+            for (int j = i + 1; j < rows.size(); j++) {
                 if (rows.get(i).getVariablesStateMap().equals(rows.get(j).getVariablesStateMap())) {
-                    newRows.add(new FactorRow(rows.get(i).getVariablesStateMap(),
-                                              rows.get(i).getProbability() + rows.get(j).getProbability()));
-                    ++this.add;
-                    System.out.println("Adding rows: " + rows.get(i).toString() + " + " + rows.get(j).toString());
+                    summedRows.add(new FactorRow(rows.get(i).getVariablesStateMap(),
+                                                 rows.get(i).getProbability() + rows.get(j).getProbability()));
+                    additions++;
                 }
             }
         }
 
-        return newRows.stream().toList();
+        return new ArrayList<>(summedRows);
     }
 
+    // Restricts the factors based on the given evidence variables
     private void restrict(List<Pair<Variable, String>> evidenceVariables) {
+        evidenceVariables.forEach(evidenceVariable -> {
+            variableMap.remove(evidenceVariable.getKey());
+            factorList.forEach(factor -> factor.restrict(evidenceVariable.getKey().getName(), evidenceVariable.getValue()));
+        });
+    }
 
-        for (Pair<Variable, String> evidenceVariable : evidenceVariables) {
-            this.variableMap.remove(evidenceVariable.getKey());
-            this.factorList.forEach((factor) -> factor.restrict(evidenceVariable.getKey().getName(),
-                                                                evidenceVariable.getValue()));
+    // Eliminates a variable by multiplying relevant factors and summing out the variable
+    private void eliminateVariable(String variableName) {
+        List<Factor> relevantFactors = findRelevantFactors(variableName);
+        if (!relevantFactors.isEmpty()) {
+            Factor multipliedFactor = multiplyFactors(relevantFactors);
+            multipliedFactor.removeVariableFromRows(variableName);
+            multipliedFactor.setFactorRows(sumOut(multipliedFactor));
+            factorList.removeAll(relevantFactors);
+            factorList.add(multipliedFactor);
+            variableMap.remove(variableName);
         }
-
     }
 }

@@ -1,8 +1,5 @@
-
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Variable {
     private final String name;
@@ -55,10 +52,6 @@ public class Variable {
         return this.children;
     }
 
-    public void setParents(List<Variable> parents) {
-        this.parents = parents;
-    }
-
     public boolean isEvidence() {
         return this.isEvidence;
     }
@@ -67,4 +60,19 @@ public class Variable {
         this.isEvidence = evidence;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Variable variable)) return false;
+
+        if (isEvidence != variable.isEvidence) return false;
+        return name.equals(variable.name);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + (isEvidence ? 1 : 0);
+        return result;
+    }
 }

@@ -35,8 +35,4 @@ public class Query {
     public void setEliminationVariables(Queue<String> eliminationVariables) {
         this.eliminationVariables = eliminationVariables;
     }
-
-    public boolean isGiven(String variable) {
-        return this.evidenceVariables.stream().map(Pair::getKey).anyMatch((key) -> key.equals(variable));
-    }
 }
