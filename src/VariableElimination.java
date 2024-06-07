@@ -1,5 +1,4 @@
 
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -43,8 +42,8 @@ public class VariableElimination {
             }
         }
 
-        Factor multipliedFactor = this.multiplyFactors(this.factorList);
-        this.normalize(multipliedFactor);
+        Factor finalFactor = this.findFactorContainingQueryVariable(query.getQueryVariable().getKey().getName());
+        this.normalize(finalFactor);
         System.out.println();
     }
 
@@ -60,6 +59,17 @@ public class VariableElimination {
 
         this.factorList.removeAll(toDelete);
     }
+
+    private Factor findFactorContainingQueryVariable(String queryVariable) {
+        for (Factor factor : this.factorList) {
+            if (factor.getVariablesMap().containsKey(queryVariable)) {
+                return factor;
+            }
+        }
+        // If no single factor contains the query variable, multiply the remaining factors
+        return this.multiplyFactors(this.factorList);
+    }
+
 
     private Set<String> getRelevantVariables() {
         Set<String> relevantVariables = new HashSet<>();
@@ -128,6 +138,7 @@ public class VariableElimination {
                     combinedStateMap.putAll(row2.getVariablesStateMap());
                     newRows.add(new FactorRow(combinedStateMap, row1.getProbability() * row2.getProbability()));
                     ++this.multi;
+                    System.out.println("Multiplying rows: " + row1 + " * " + row2);
                 }
             }
         }
@@ -138,18 +149,12 @@ public class VariableElimination {
     }
 
     private boolean hasMatchingVariables(FactorRow row1, FactorRow row2, List<String> commonVariables) {
-        Iterator<String> var4 = commonVariables.iterator();
-
-        String variable;
-        do {
-            if (!var4.hasNext()) {
-                return true;
+        for (String variable : commonVariables) {
+            if (!row1.getVariableState(variable).equals(row2.getVariableState(variable))) {
+                return false;
             }
-
-            variable = var4.next();
-        } while (row1.getVariableState(variable).equals(row2.getVariableState(variable)));
-
-        return false;
+        }
+        return true;
     }
 
     private List<String> findCommonVariables(Factor f1, Factor f2) {
@@ -170,6 +175,7 @@ public class VariableElimination {
                     newRows.add(new FactorRow(rows.get(i).getVariablesStateMap(),
                                               rows.get(i).getProbability() + rows.get(j).getProbability()));
                     ++this.add;
+                    System.out.println("Adding rows: " + rows.get(i).toString() + " + " + rows.get(j).toString());
                 }
             }
         }

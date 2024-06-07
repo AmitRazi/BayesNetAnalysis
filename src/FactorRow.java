@@ -47,4 +47,12 @@ public class FactorRow {
     public void removeVariable(String variable) {
         this.variablesStateMap.remove(variable);
     }
+
+    @Override
+    public String toString() {
+        return "FactorRow{" +
+                "variablesStateMap=" + variablesStateMap +
+                ", probability=" + probability +
+                '}';
+    }
 }
