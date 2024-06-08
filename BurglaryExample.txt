@@ -1,0 +1,2 @@
+BurglaryExample.xml
+P(B=t|J=t,M=t) 

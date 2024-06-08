@@ -1,0 +1,2 @@
+ExerciseExampleTernary.xml
+P(E=1|D=0) A-B-C

@@ -1,37 +1,42 @@
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.util.List;
+import java.io.*;
 
 public class Main {
-    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
-        BnParser parser = new BnParser();
-        parser.parseBayesianNetwork("alarm_net.xml");
-        BayesianNetwork network = parser.getBayesianNetwork();
+    public static void main(String[] args)  {
 
 
-        Variable L = new Variable("L",List.of("T","F"));
-        Variable R = new Variable("R",List.of("T","F"));
-        Variable D = new Variable("D",List.of("T","F"));
-        Variable T = new Variable("T",List.of("T","F"));
-        Variable B = new Variable("B",List.of("T","F"));
-        Variable Tprime = new Variable("Tprime'",List.of("T","F"));
+        BayesianNetwork network = null;
+        String inputFilePath = "ExerciseExampleTernary.txt";
+        String outputFilePath = "output.txt";
+        int lineIndex = 0;
+        try(BufferedReader bufferedReader = new BufferedReader(new FileReader(inputFilePath));
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(outputFilePath))){
 
-        R.addParent(L);
-        L.addChild(R);
-        D.addParent(R);
-        R.addChild(D);
-        R.addChild(T);
-        B.addChild(T);
-        T.addParent(B);
-        T.addParent(R);
-        Tprime.addParent(T);
-        T.addChild(Tprime);
-
-        BayesBall bayesBall3 = new BayesBall(L, Tprime);
-        bayesBall3.findAllPaths();
-        System.out.println("Test 3: L and B are independent given T: " + bayesBall3.isIndependent());
+            String line;
+            while((line = bufferedReader.readLine()) != null){
+                if(lineIndex == 0){
+                    BayesianNetworkParser parser = new BayesianNetworkParser();
+                    parser.parseBayesianNetwork(line);
+                    network = parser.getBayesianNetwork();
+                    lineIndex++;
+                } else{
+                    if(line.startsWith("P(")) {
+                        VariableEliminationQueryParser variableEliminationQueryParser = new VariableEliminationQueryParser(network);
+                        VariableEliminationQuery variableEliminationQuery = variableEliminationQueryParser.parseQuery(line);
+                        VariableElimination ve = new VariableElimination(network, variableEliminationQuery);
+                        ve.executeQuery();
+                        bufferedWriter.write(ve.getResult()+"\n");
+                    } else {
+                        BayesBallQueryParser bayesBallQueryParser = new BayesBallQueryParser(network);
+                        BayesBallQuery bayesBallQuery = bayesBallQueryParser.parseQuery(line);
+                        BayesBall bayesBall = new BayesBall(bayesBallQuery);
+                        bayesBall.executeQuery();
+                        bufferedWriter.write(bayesBallQuery.isIndependent() ? "yes\n" : "no\n");
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

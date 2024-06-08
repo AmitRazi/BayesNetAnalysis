@@ -1,0 +1,6 @@
+UniversityExample.xml
+P(A=true|D=true) B-C
+P(B=true|A=true)
+P(A=true|B=false)
+P(C=false|A=false)
+P(A=true|)

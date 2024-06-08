@@ -2,13 +2,27 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="02e07c27-2375-438c-91f3-68c6471fd530" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/BayesBallTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AlarmNet.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BayesballClassExample.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BayesballExample.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BurglaryExample.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ExerciseExample.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ExerciseExampleTernary.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UniversityExample.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/input.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/BayesBallQuery.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/BayesBallQueryParser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/VariableEliminationQuery.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/VariableEliminationQueryParser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AiAlgorithms.iml" beforeDir="false" afterPath="$PROJECT_DIR$/AiAlgorithms.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/BayesBall.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BayesBall.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/BnParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BnParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BayesBallTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BayesBallTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BnParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BayesianNetworkParser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Factor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Factor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FactorRow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FactorRow.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pair.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pair.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Query.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Variable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Variable.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/VariableElimination.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/VariableElimination.java" afterDir="false" />
     </list>
@@ -20,8 +34,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="JUnit5 Test Class" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -38,29 +52,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Downloaded.Files.Path.Enabled": "false",
-    "Repository.Attach.Annotations": "false",
-    "Repository.Attach.JavaDocs": "false",
-    "Repository.Attach.Sources": "false",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
-    "create.test.in.the.same.root": "true",
-    "last_opened_file_path": "C:/Users/97250/IdeaProjects/AiAlgorithms/src",
-    "nodejs_package_manager_path": "npm"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
+    &quot;create.test.in.the.same.root&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/97250/IdeaProjects/AiAlgorithms/src&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\97250\IdeaProjects\AiAlgorithms\src" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\97250\IdeaProjects\AiAlgorithms" />
+      <recent name="C:\Users\97250\IdeaProjects\AiAlgorithms\src" />
     </key>
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
@@ -101,6 +116,11 @@
       <workItem from="1717747745950" duration="4709000" />
       <workItem from="1717759657791" duration="2446000" />
       <workItem from="1717769943640" duration="3903000" />
+      <workItem from="1717777000789" duration="1560000" />
+      <workItem from="1717834897219" duration="7929000" />
+      <workItem from="1717846011690" duration="69000" />
+      <workItem from="1717846325498" duration="797000" />
+      <workItem from="1717850713341" duration="5718000" />
     </task>
     <servers />
   </component>
@@ -122,15 +142,30 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/BayesBall.java</url>
+          <line>115</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/BayesBall.java</url>
+          <line>96</line>
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Main.java</url>
+          <line>25</line>
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/VariableElimination.java</url>
-          <line>27</line>
-          <option name="timeStamp" value="5" />
+          <line>44</line>
+          <option name="timeStamp" value="30" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
-        <PinnedItemInfo parentTag="Factor" memberName="factorRows" />
+        <PinnedItemInfo parentTag="Factor" memberName="parentVariable" />
       </pinned-members>
     </pin-to-top-manager>
   </component>
