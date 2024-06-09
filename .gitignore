@@ -1,9 +1,21 @@
-### IntelliJ IDEA ###
-out/
+# Ignore everything
+*
+
+# Except the src directory
+!src/
+!src/**
+
+# Exclude Main.java
+src/utils/Main.java
+
+# IntelliJ IDEA
+/out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
-### Eclipse ###
+/.idea/
+
+# Eclipse
 .apt_generated
 .classpath
 .factorypath
@@ -11,22 +23,25 @@ out/
 .settings
 .springBeans
 .sts4-cache
-bin/
+/bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
-### NetBeans ###
+# NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 
-### VS Code ###
-.vscode/
+# VS Code
+/.vscode/
 
-### Mac OS ###
-.DS_Store
+# Mac OS
+/.DS_Store
 
-.xml
-.txt
+# Ignore all .xml and .txt files except those in src
+*.xml
+!src/**/*.xml
+*.txt
+!src/**/*.txt

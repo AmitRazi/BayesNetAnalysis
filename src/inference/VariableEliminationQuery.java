@@ -1,3 +1,5 @@
+import utils.Pair;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +23,7 @@ public class VariableEliminationQuery {
     /**
      * Gets the query variable.
      *
-     * @return the query variable as a Pair of Variable and its state
+     * @return the query variable as a utils.Pair of Variable and its state
      */
     public Pair<Variable, String> getQueryVariable() {
         return this.queryVariable;
@@ -30,7 +32,7 @@ public class VariableEliminationQuery {
     /**
      * Sets the query variable.
      *
-     * @param queryVariable the query variable as a Pair of Variable and its state
+     * @param queryVariable the query variable as a utils.Pair of Variable and its state
      */
     public void setQueryVariable(Pair<Variable, String> queryVariable) {
         this.queryVariable = queryVariable;
@@ -48,7 +50,7 @@ public class VariableEliminationQuery {
     /**
      * Adds an evidence variable to the list.
      *
-     * @param evidence the evidence variable as a Pair of Variable and its state
+     * @param evidence the evidence variable as a utils.Pair of Variable and its state
      */
     public void addEvidenceVariable(Pair<Variable, String> evidence) {
         this.evidenceVariables.add(evidence);

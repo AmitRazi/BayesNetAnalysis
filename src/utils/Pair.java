@@ -1,3 +1,5 @@
+package utils;
+
 /**
  * This class represents a generic pair of key and value.
  *
@@ -9,7 +11,7 @@ public class Pair<K, V> {
     private V value; // The value of the pair
 
     /**
-     * Constructor for the Pair class.
+     * Constructor for the utils.Pair class.
      *
      * @param key the key of the pair
      * @param value the value of the pair
