@@ -1,4 +1,0 @@
-ExerciseExampleTernary.xml
-P(E=1|D=0) A-B-C
-P(E=0|B=1) C
-P(F=1|A=0,B=1,D=1) C-E
