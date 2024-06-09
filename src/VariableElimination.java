@@ -30,7 +30,7 @@ public class VariableElimination {
         this.queryResult = new QueryResult();
     }
 
-    public String getResult(){
+    public String getResult() {
         return queryResult.toString();
     }
 
@@ -51,10 +51,16 @@ public class VariableElimination {
         }
     }
 
+    /**
+     * Sorts factors by the number of rows.
+     */
     private void sortFactorsByNumOfRows() {
-        Collections.sort(factorList,(f1,f2)->Integer.compare(f1.getFactorRows().size(),f2.getFactorRows().size()));
+        Collections.sort(factorList, (f1, f2) -> Integer.compare(f1.getFactorRows().size(), f2.getFactorRows().size()));
     }
 
+    /**
+     * Sets the query result based on the final factor's probability.
+     */
     private void setQueryResult() {
         queryResult.setProbability(factorList.get(0).getRowsWithVariableAndState(variableEliminationQuery.getQueryVariable().getKey(),
                                                                                  variableEliminationQuery.getQueryVariable().getValue()).get(0).getProbability());
@@ -262,23 +268,29 @@ public class VariableElimination {
      * Sums out a variable from a factor, returning a new list of factor rows.
      *
      * @param factor the factor from which the variable is to be summed out
+     * @param sumOutVariableName the name of the variable to be summed out
      * @return a list of new factor rows after summing out the variable
      */
-    private List<FactorRow> sumOut(Factor factor) {
+    private List<FactorRow> sumOut(Factor factor, String sumOutVariableName) {
         List<FactorRow> rows = factor.getFactorRows();
-        Set<FactorRow> summedRows = new HashSet<>();
+        Map<Map<String, String>, Double> sumOutMap = new HashMap<>();
 
-        for (int i = 0; i < rows.size(); i++) {
-            for (int j = i + 1; j < rows.size(); j++) {
-                if (rows.get(i).getVariablesStateMap().equals(rows.get(j).getVariablesStateMap())) {
-                    summedRows.add(new FactorRow(rows.get(i).getVariablesStateMap(),
-                                                 rows.get(i).getProbability() + rows.get(j).getProbability()));
-                    queryResult.incrementAdditionOperations(1);
-                }
+        for (FactorRow row : rows) {
+            Map<String, String> stateMap = row.getVariablesStateMap();
+            stateMap.remove(sumOutVariableName);
+
+            if (sumOutMap.containsKey(stateMap)) {
+                sumOutMap.put(stateMap, sumOutMap.get(stateMap) + row.getProbability());
+                queryResult.incrementAdditionOperations(1); // Count the addition operation
+            } else {
+                sumOutMap.put(stateMap, row.getProbability());
             }
         }
 
-        return new ArrayList<>(summedRows);
+        List<FactorRow> summedRows = sumOutMap.entrySet().stream().map(entry -> new FactorRow(entry.getKey(),
+                                                                                              entry.getValue())).collect(
+                Collectors.toList());
+        return summedRows;
     }
 
     /**
@@ -288,7 +300,7 @@ public class VariableElimination {
      */
     private void restrict(List<Pair<Variable, String>> evidenceVariables) {
         evidenceVariables.forEach(evidenceVariable -> {
-            variableMap.remove(evidenceVariable.getKey());
+            variableMap.remove(evidenceVariable.getKey().getName());
             factorList.forEach(factor -> factor.restrict(evidenceVariable.getKey().getName(), evidenceVariable.getValue()));
         });
     }
@@ -303,7 +315,7 @@ public class VariableElimination {
         if (!relevantFactors.isEmpty()) {
             Factor multipliedFactor = multiplyFactors(relevantFactors);
             multipliedFactor.removeVariableFromRows(variableName);
-            List<FactorRow> rows = sumOut(multipliedFactor);
+            List<FactorRow> rows = sumOut(multipliedFactor, variableName);
             multipliedFactor.setFactorRows(rows);
             factorList.removeAll(relevantFactors);
             factorList.add(multipliedFactor);
@@ -311,20 +323,37 @@ public class VariableElimination {
         }
     }
 
-
-    private static class QueryResult{
+    /**
+     * Inner class to store the query result, including the probability and the number of operations performed.
+     */
+    private static class QueryResult {
         private double probability;
         private int additionOperations;
         private int multiplicationOperations;
 
-        public void incrementAdditionOperations(int incrementBy){
-            additionOperations+=incrementBy;
+        /**
+         * Increments the count of addition operations.
+         *
+         * @param incrementBy the number to increment by
+         */
+        public void incrementAdditionOperations(int incrementBy) {
+            additionOperations += incrementBy;
         }
 
-        public void incrementMultiplicationOperations(int incrementBy){
-            multiplicationOperations+=incrementBy;
+        /**
+         * Increments the count of multiplication operations.
+         *
+         * @param incrementBy the number to increment by
+         */
+        public void incrementMultiplicationOperations(int incrementBy) {
+            multiplicationOperations += incrementBy;
         }
 
+        /**
+         * Sets the probability, rounding it to 5 decimal places.
+         *
+         * @param probability the probability to set
+         */
         public void setProbability(double probability) {
             BigDecimal result = new BigDecimal(probability).setScale(5, RoundingMode.HALF_UP);
             this.probability = result.doubleValue();
@@ -332,8 +361,8 @@ public class VariableElimination {
 
         @Override
         public String toString() {
-            return probability + "," + additionOperations + "," +
-                    multiplicationOperations;
+            String formattedProbability = String.format("%.5f", probability);
+            return formattedProbability + "," + additionOperations + "," + multiplicationOperations;
         }
     }
 }

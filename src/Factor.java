@@ -54,11 +54,12 @@ public class Factor {
      */
     public void restrict(String variableName, String evidenceState) {
         if (this.variablesMap.containsKey(variableName)) {
+            // Filter rows to keep only those that match the evidence state for the given variable
             this.factorRows = this.factorRows.stream()
                                              .filter(row -> row.matchesEvidence(variableName, evidenceState))
                                              .collect(Collectors.toList());
-            this.removeVariableFromRows(variableName);
-            this.variablesMap.remove(variableName);
+            this.removeVariableFromRows(variableName); // Remove the variable from all rows
+            this.variablesMap.remove(variableName); // Remove the variable from the map
         }
     }
 
@@ -129,7 +130,7 @@ public class Factor {
     /**
      * Returns the rows with the specific variable and state.
      *
-     * @param variableName the name of the variable
+     * @param variable the variable
      * @param state the state of the variable
      * @return the list of rows that match the specific variable and state
      */
@@ -138,6 +139,4 @@ public class Factor {
                               .filter(row -> row.getVariableState(variable.getName()).equals(state))
                               .collect(Collectors.toList());
     }
-
-
 }

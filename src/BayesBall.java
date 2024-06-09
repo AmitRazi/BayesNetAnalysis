@@ -5,10 +5,14 @@ import java.util.*;
  * between two variables in a Bayesian Network.
  */
 public class BayesBall {
-    private BayesBallQuery bayesBallQuery;
-    private final Map<Variable, VisitCount> visitCountMap;
+    private BayesBallQuery bayesBallQuery; // The Bayes Ball query object
+    private final Map<Variable, VisitCount> visitCountMap; // Map to keep track of visit counts for variables
 
-
+    /**
+     * Constructor initializes the Bayes Ball query and the visit count map.
+     *
+     * @param query the Bayes Ball query object
+     */
     public BayesBall(BayesBallQuery query) {
         this.bayesBallQuery = query;
         this.visitCountMap = new HashMap<>();
@@ -31,16 +35,16 @@ public class BayesBall {
      * @param fromChild         indicates if the current variable was reached from a child
      */
     private void findPathsDFS(Variable currentVariable, List<Variable> currentPath, Variable previousVariable, boolean fromChild) {
-        if (!bayesBallQuery.isIndependent()) return;
+        if (!bayesBallQuery.isIndependent()) return; // Stop if independence has already been disproven
 
         VisitCount visitCount = visitCountMap.getOrDefault(currentVariable, new VisitCount());
 
         if (previousVariable != null) {
             if (!fromChild) {
-                if (visitCount.getFromParentCount() >= 1) return;
+                if (visitCount.getFromParentCount() >= 1) return; // Stop if visited from parent already
                 visitCount.incrementFromParent();
             } else {
-                if (visitCount.getFromChildCount() >= 1) return;
+                if (visitCount.getFromChildCount() >= 1) return; // Stop if visited from child already
                 visitCount.incrementFromChild();
             }
         }
@@ -49,9 +53,9 @@ public class BayesBall {
         currentPath.add(currentVariable);
 
         if (currentVariable.equals(bayesBallQuery.getEndVariable())) {
-            validatePath(new ArrayList<>(currentPath));
+            validatePath(new ArrayList<>(currentPath)); // Check if the current path shows (in)dependence
         } else {
-            explorePaths(currentVariable, currentPath);
+            explorePaths(currentVariable, currentPath); // Continue exploring paths
         }
 
         currentPath.remove(currentPath.size() - 1);
@@ -113,7 +117,7 @@ public class BayesBall {
                 }
             }
         }
-        bayesBallQuery.setIndependent(false);
+        bayesBallQuery.setIndependent(false); // If path is valid, set independence to false
     }
 
     /**
@@ -125,6 +129,9 @@ public class BayesBall {
         return bayesBallQuery.isIndependent();
     }
 
+    /**
+     * Executes the Bayes Ball query to determine conditional independence.
+     */
     public void executeQuery() {
         findAllPaths();
     }
@@ -133,8 +140,8 @@ public class BayesBall {
      * Inner class to track the number of times a variable is visited from parents and children.
      */
     private static class VisitCount {
-        private int fromParentCount = 0;
-        private int fromChildCount = 0;
+        private int fromParentCount = 0; // Number of times visited from a parent
+        private int fromChildCount = 0; // Number of times visited from a child
 
         public void incrementFromParent() {
             fromParentCount++;

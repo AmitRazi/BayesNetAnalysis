@@ -34,13 +34,14 @@ public class VariableEliminationQueryParser {
     /**
      * Extracts the elimination order from the query string.
      *
-     * @param variableEliminationQuery    the Query object
+     * @param variableEliminationQuery the Query object
      * @param queryStr the query string
      */
     private void extractEliminationOrder(VariableEliminationQuery variableEliminationQuery, String queryStr) {
         Pattern pattern = Pattern.compile(".*\\)(.*)");
         Matcher match = pattern.matcher(queryStr);
         match.find();
+        // Extract elimination variables from the query string after the closing parenthesis
         Queue<String> eliminationVariables = Arrays.stream(match.group(1).split("-")).map(String::trim).collect(
                 Collectors.toCollection(ArrayDeque::new));
         variableEliminationQuery.setEliminationVariables(eliminationVariables);
@@ -49,7 +50,7 @@ public class VariableEliminationQueryParser {
     /**
      * Extracts the evidence variables from the parsed variables.
      *
-     * @param variableEliminationQuery     the Query object
+     * @param variableEliminationQuery the Query object
      * @param variables the parsed variables
      */
     private void extractEvidence(VariableEliminationQuery variableEliminationQuery, String[] variables) {
@@ -64,7 +65,7 @@ public class VariableEliminationQueryParser {
     /**
      * Extracts the query variable from the parsed variables.
      *
-     * @param variableEliminationQuery     the Query object
+     * @param variableEliminationQuery the Query object
      * @param variables the parsed variables
      */
     private void extractQueryVariable(VariableEliminationQuery variableEliminationQuery, String[] variables) {

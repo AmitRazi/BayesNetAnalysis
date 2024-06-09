@@ -2,29 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="02e07c27-2375-438c-91f3-68c6471fd530" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/AlarmNet.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BayesballClassExample.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BayesballExample.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BurglaryExample.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ExerciseExample.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ExerciseExampleTernary.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UniversityExample.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/input.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/BayesBallQuery.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/BayesBallQueryParser.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/VariableEliminationQuery.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/VariableEliminationQueryParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ExerciseExampleTernary.txt" beforeDir="false" afterPath="$PROJECT_DIR$/ExerciseExampleTernary.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/BayesBall.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BayesBall.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BayesBallQuery.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BayesBallQuery.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BayesBallQueryParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BayesBallQueryParser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/BayesBallTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BayesBallTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/BnParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BayesianNetworkParser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Factor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Factor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FactorRow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FactorRow.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Pair.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pair.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Query.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Variable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Variable.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/VariableElimination.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/VariableElimination.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/VariableEliminationQueryParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/VariableEliminationQueryParser.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -120,7 +108,10 @@
       <workItem from="1717834897219" duration="7929000" />
       <workItem from="1717846011690" duration="69000" />
       <workItem from="1717846325498" duration="797000" />
-      <workItem from="1717850713341" duration="5718000" />
+      <workItem from="1717850713341" duration="7007000" />
+      <workItem from="1717864633468" duration="1055000" />
+      <workItem from="1717868234218" duration="46000" />
+      <workItem from="1717929369359" duration="1193000" />
     </task>
     <servers />
   </component>
@@ -143,12 +134,12 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/BayesBall.java</url>
-          <line>115</line>
+          <line>119</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/BayesBall.java</url>
-          <line>96</line>
+          <line>100</line>
           <option name="timeStamp" value="25" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -160,6 +151,16 @@
           <url>file://$PROJECT_DIR$/src/VariableElimination.java</url>
           <line>44</line>
           <option name="timeStamp" value="30" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/VariableElimination.java</url>
+          <line>317</line>
+          <option name="timeStamp" value="31" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/VariableElimination.java</url>
+          <line>274</line>
+          <option name="timeStamp" value="32" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
