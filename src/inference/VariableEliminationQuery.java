@@ -1,3 +1,5 @@
+package inference;
+
 import utils.Pair;
 
 import java.util.ArrayDeque;

@@ -1,3 +1,7 @@
+package bayesball;
+
+import inference.Variable;
+
 import java.util.*;
 
 /**
@@ -5,7 +9,7 @@ import java.util.*;
  * between two variables in a Bayesian Network.
  */
 public class BayesBall {
-    private BayesBallQuery bayesBallQuery; // The Bayes Ball query object
+    private final BayesBallQuery bayesBallQuery; // The Bayes Ball query object
     private final Map<Variable, VisitCount> visitCountMap; // Map to keep track of visit counts for variables
 
     /**

@@ -1,3 +1,6 @@
+package inference;
+
+import core.BayesianNetwork;
 import utils.Pair;
 
 import java.util.ArrayDeque;

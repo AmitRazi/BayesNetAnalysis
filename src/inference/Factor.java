@@ -1,3 +1,5 @@
+package inference;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -8,7 +10,7 @@ import java.util.stream.Collectors;
  */
 public class Factor {
     private Variable parentVariable; // The parent variable of this factor
-    private Map<String, Variable> variablesMap; // Map of variables in this factor
+    private final Map<String, Variable> variablesMap; // Map of variables in this factor
     private List<FactorRow> factorRows; // List of factor rows representing the conditional probabilities
 
     /**
@@ -116,15 +118,6 @@ public class Factor {
      */
     public Variable getParentVariable() {
         return this.parentVariable;
-    }
-
-    /**
-     * Sets the parent variable of this factor.
-     *
-     * @param parentVariable the new parent variable
-     */
-    public void setParentVariable(Variable parentVariable) {
-        this.parentVariable = parentVariable;
     }
 
     /**

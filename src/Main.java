@@ -1,3 +1,12 @@
+import bayesball.BayesBall;
+import bayesball.BayesBallQuery;
+import bayesball.BayesBallQueryParser;
+import core.BayesianNetwork;
+import core.BayesianNetworkParser;
+import inference.VariableElimination;
+import inference.VariableEliminationQuery;
+import inference.VariableEliminationQueryParser;
+
 import java.io.*;
 
 public class Main {
@@ -5,7 +14,7 @@ public class Main {
 
 
         BayesianNetwork network = null;
-        String inputFilePath = "ExerciseExampleTernary.txt";
+        String inputFilePath = "UniversityExample.txt";
         String outputFilePath = "output.txt";
         int lineIndex = 0;
         try(BufferedReader bufferedReader = new BufferedReader(new FileReader(inputFilePath));

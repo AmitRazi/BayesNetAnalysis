@@ -1,3 +1,8 @@
+package core;
+
+import inference.Factor;
+import inference.Variable;
+
 import java.util.List;
 import java.util.Map;
 

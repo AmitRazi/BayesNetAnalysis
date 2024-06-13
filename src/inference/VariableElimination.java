@@ -1,3 +1,6 @@
+package inference;
+
+import core.BayesianNetwork;
 import utils.Pair;
 
 import java.math.BigDecimal;
@@ -13,20 +16,20 @@ public class VariableElimination {
     private final List<Factor> factorList; // List of factors in the Bayesian Network
     private final Map<String, Variable> variableMap; // Map of variables in the Bayesian Network
     private final VariableEliminationQuery variableEliminationQuery; // Query to be executed
-    private QueryResult queryResult;
+    private final QueryResult queryResult;
 
     /**
      * Constructor initializes factorList and variableMap from the given BayesianNetwork and Query.
      *
-     * @param network the Bayesian Network
+     * @param network                  the Bayesian Network
      * @param variableEliminationQuery the query to be executed
      */
     public VariableElimination(BayesianNetwork network, VariableEliminationQuery variableEliminationQuery) {
         this.variableEliminationQuery = variableEliminationQuery;
-        this.factorList = network.getFactorList().stream()
-                                 .map(Factor::new)
-                                 .collect(Collectors.toList());
-        this.variableMap = network.getVariableMap().entrySet().stream()
+        this.factorList = network.getFactorList().stream().map(Factor::new).collect(Collectors.toList());
+        this.variableMap = network.getVariableMap()
+                                  .entrySet()
+                                  .stream()
                                   .collect(Collectors.toMap(Map.Entry::getKey,
                                                             entry -> new Variable(entry.getValue())));
         this.queryResult = new QueryResult();
@@ -41,6 +44,13 @@ public class VariableElimination {
      */
     public void executeQuery() {
         try {
+            Double directCptResult = getDirectCptResult();
+
+            if (directCptResult != null) {
+                queryResult.setProbability(directCptResult);
+                return;
+            }
+
             restrictFactorsBasedOnEvidence();
             filterOutIrrelevantVariables();
             sortFactorsByNumOfRows();
@@ -53,19 +63,57 @@ public class VariableElimination {
         }
     }
 
+    private Double getDirectCptResult() {
+        Variable queryVariable = variableEliminationQuery.getQueryVariable().getKey();
+        String queryState = variableEliminationQuery.getQueryVariable().getValue();
+
+        List<Pair<Variable, String>> evidenceVariables = variableEliminationQuery.getEvidenceVariables();
+
+        for (Factor factor : factorList) {
+            if (factor.containsVariable(queryVariable.getName())) {
+                Set<String> factorVariables = factor.getVariablesMap().keySet();
+                if (factorVariables.size() == 1 + evidenceVariables.size()) {
+                    boolean allEvidenceMatch = evidenceVariables.stream()
+                                                                .allMatch(e -> factorVariables.contains(e.getKey()
+                                                                                                         .getName()));
+                    if (allEvidenceMatch) {
+                        List<FactorRow> rows = factor.getFactorRows();
+                        for (FactorRow row : factor.getFactorRows()) {
+                            boolean match = row.getVariableState(queryVariable.getName())
+                                               .equals(queryState) && evidenceVariables.stream()
+                                                                                       .allMatch(e -> row.getVariableState(
+                                                                                                                 e.getKey().getName())
+                                                                                                         .equals(e.getValue()));
+                            if(match){
+                                return row.getProbability();
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Sorts factors by the number of rows.
      */
     private void sortFactorsByNumOfRows() {
-        Collections.sort(factorList, (f1, f2) -> Integer.compare(f1.getFactorRows().size(), f2.getFactorRows().size()));
+        factorList.sort(Comparator.comparingInt(f -> f.getFactorRows().size()));
     }
 
     /**
      * Sets the query result based on the final factor's probability.
      */
     private void setQueryResult() {
-        queryResult.setProbability(factorList.get(0).getRowsWithVariableAndState(variableEliminationQuery.getQueryVariable().getKey(),
-                                                                                 variableEliminationQuery.getQueryVariable().getValue()).get(0).getProbability());
+        queryResult.setProbability(factorList.get(0)
+                                             .getRowsWithVariableAndState(variableEliminationQuery.getQueryVariable()
+                                                                                                  .getKey(),
+                                                                          variableEliminationQuery.getQueryVariable()
+                                                                                                  .getValue())
+                                             .get(0)
+                                             .getProbability());
     }
 
     /**
@@ -95,7 +143,10 @@ public class VariableElimination {
      * Processes the final factor for the query variable.
      */
     private void processFinalFactorForQueryVariable() {
-        Factor finalFactor = multiplyFactors(findFactorsContainingQueryVariable(variableEliminationQuery.getQueryVariable().getKey().getName()));
+        Factor finalFactor =
+                multiplyFactors(findFactorsContainingQueryVariable(variableEliminationQuery.getQueryVariable()
+                                                                                                        .getKey()
+                                                                                                        .getName()));
         normalize(finalFactor);
         factorList.clear();
         factorList.add(finalFactor);
@@ -157,7 +208,7 @@ public class VariableElimination {
     /**
      * Helper method to recursively find ancestors of a variable.
      *
-     * @param variable the variable whose ancestors are to be found
+     * @param variable  the variable whose ancestors are to be found
      * @param ancestors the set of ancestor variable names
      */
     private void findAncestors(Variable variable, Set<String> ancestors) {
@@ -174,10 +225,12 @@ public class VariableElimination {
      * @param factor the factor to be normalized
      */
     private void normalize(Factor factor) {
-        double probabilitySum = factor.getFactorRows().stream()
-                                      .mapToDouble(FactorRow::getProbability)
-                                      .sum();
-        queryResult.incrementAdditionOperations(variableMap.get(variableEliminationQuery.getQueryVariable().getKey().getName()).getOutcomes().size() - 1);
+        double probabilitySum = factor.getFactorRows().stream().mapToDouble(FactorRow::getProbability).sum();
+        queryResult.incrementAdditionOperations(variableMap.get(variableEliminationQuery.getQueryVariable()
+                                                                                        .getKey()
+                                                                                        .getName())
+                                                           .getOutcomes()
+                                                           .size() - 1);
         factor.getFactorRows().forEach(row -> row.setProbability(row.getProbability() / probabilitySum));
     }
 
@@ -188,9 +241,7 @@ public class VariableElimination {
      * @return a list of relevant factors
      */
     private List<Factor> findRelevantFactors(String variableName) {
-        return factorList.stream()
-                         .filter(factor -> factor.containsVariable(variableName))
-                         .collect(Collectors.toList());
+        return factorList.stream().filter(factor -> factor.containsVariable(variableName)).collect(Collectors.toList());
     }
 
     /**
@@ -241,14 +292,15 @@ public class VariableElimination {
     /**
      * Checks if two factor rows have matching variables.
      *
-     * @param row1 the first factor row
-     * @param row2 the second factor row
+     * @param row1            the first factor row
+     * @param row2            the second factor row
      * @param commonVariables the list of common variable names
      * @return true if the rows have matching variables, false otherwise
      */
     private boolean hasMatchingVariables(FactorRow row1, FactorRow row2, List<String> commonVariables) {
         return commonVariables.stream()
-                              .allMatch(variable -> row1.getVariableState(variable).equals(row2.getVariableState(variable)));
+                              .allMatch(variable -> row1.getVariableState(variable)
+                                                        .equals(row2.getVariableState(variable)));
     }
 
     /**
@@ -261,15 +313,13 @@ public class VariableElimination {
     private List<String> findCommonVariables(Factor f1, Factor f2) {
         Set<String> f1Variables = f1.getVariablesMap().keySet();
         Set<String> f2Variables = f2.getVariablesMap().keySet();
-        return f1Variables.stream()
-                          .filter(f2Variables::contains)
-                          .collect(Collectors.toList());
+        return f1Variables.stream().filter(f2Variables::contains).collect(Collectors.toList());
     }
 
     /**
      * Sums out a variable from a factor, returning a new list of factor rows.
      *
-     * @param factor the factor from which the variable is to be summed out
+     * @param factor             the factor from which the variable is to be summed out
      * @param sumOutVariableName the name of the variable to be summed out
      * @return a list of new factor rows after summing out the variable
      */
@@ -289,10 +339,10 @@ public class VariableElimination {
             }
         }
 
-        List<FactorRow> summedRows = sumOutMap.entrySet().stream().map(entry -> new FactorRow(entry.getKey(),
-                                                                                              entry.getValue())).collect(
-                Collectors.toList());
-        return summedRows;
+        return sumOutMap.entrySet()
+                        .stream()
+                        .map(entry -> new FactorRow(entry.getKey(), entry.getValue()))
+                        .collect(Collectors.toList());
     }
 
     /**
@@ -301,10 +351,8 @@ public class VariableElimination {
      * @param evidenceVariables the list of evidence variables
      */
     private void restrict(List<Pair<Variable, String>> evidenceVariables) {
-        evidenceVariables.forEach(evidenceVariable -> {
-            variableMap.remove(evidenceVariable.getKey().getName());
-            factorList.forEach(factor -> factor.restrict(evidenceVariable.getKey().getName(), evidenceVariable.getValue()));
-        });
+        evidenceVariables.forEach(evidenceVariable -> factorList.forEach(factor -> factor.restrict(evidenceVariable.getKey().getName(),
+                                                                                               evidenceVariable.getValue())));
     }
 
     /**

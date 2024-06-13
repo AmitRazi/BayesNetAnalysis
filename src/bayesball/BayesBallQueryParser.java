@@ -1,3 +1,7 @@
+package bayesball;
+
+import core.BayesianNetwork;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

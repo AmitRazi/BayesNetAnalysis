@@ -1,3 +1,5 @@
+package inference;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,9 +132,7 @@ public class Variable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Variable)) return false;
-
-        Variable variable = (Variable) o;
+        if (!(o instanceof Variable variable)) return false;
 
         if (isEvidence != variable.isEvidence) return false;
         return name.equals(variable.name);

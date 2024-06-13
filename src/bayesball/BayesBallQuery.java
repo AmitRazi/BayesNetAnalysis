@@ -1,3 +1,7 @@
+package bayesball;
+
+import inference.Variable;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -8,7 +12,7 @@ import java.util.Set;
 public class BayesBallQuery {
     private Variable startVariable; // The start variable in the Bayes Ball query
     private Variable endVariable; // The end variable in the Bayes Ball query
-    private Set<Variable> evidenceVariables; // The set of evidence variables
+    private final Set<Variable> evidenceVariables; // The set of evidence variables
     private boolean isIndependent; // The result of the independence check
 
     /**

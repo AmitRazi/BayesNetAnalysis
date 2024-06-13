@@ -1,3 +1,8 @@
+package core;
+
+import inference.Factor;
+import inference.FactorRow;
+import inference.Variable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
